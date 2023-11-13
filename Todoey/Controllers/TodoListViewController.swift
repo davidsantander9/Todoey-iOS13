@@ -21,22 +21,9 @@ class TodoListViewController: UITableViewController{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.navigationBar.isHidden=false
-        let newItem = Item()
-        newItem.title = "Stop Eren"
-        itemArray.append(newItem)
+        loadItems()
         
-        let newItem2 = Item()
-        newItem2.title = "Find Yaqui"
-        itemArray.append(newItem2)
         
-        let newItem3 = Item()
-        newItem3.title = "Conquer the world"
-        itemArray.append(newItem3)
-        
-        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
-            itemArray = items
-        }
         tableView.dataSource = self
         // Do any additional setup after loading the view.
     }
@@ -45,8 +32,6 @@ class TodoListViewController: UITableViewController{
     @IBAction func addButtonPressed(_ sender: Any) {
         
         var textField = UITextField()
-        print("Hi")
-        
         let alert = UIAlertController(title: "Add new todo item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add Item", style: .default){ (action) in
@@ -78,6 +63,18 @@ class TodoListViewController: UITableViewController{
         }
         self.tableView.reloadData()
     }
+    
+    func loadItems(){
+        if let data = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+                itemArray = try decoder.decode([Item].self, from: data)
+            }catch{
+                print("error \(error )")
+            }
+        }
+        
+    }
 }
 
 extension TodoListViewController {
@@ -100,9 +97,11 @@ extension TodoListViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let item = itemArray[indexPath.row]
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        tableView.cellForRow(at: indexPath)?.accessoryType = !item.done ? .none : .checkmark
+        saveItems()
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     
