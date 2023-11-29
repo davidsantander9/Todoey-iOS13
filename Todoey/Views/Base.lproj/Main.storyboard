@@ -84,7 +84,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="BKB-kT-Wm1" kind="show" identifier="CategoryCell" id="BAT-fQ-BXw"/>
+                        <segue destination="BKB-kT-Wm1" kind="show" identifier="goToItems" id="BAT-fQ-BXw"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="A3Y-dB-f4s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
