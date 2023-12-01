@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController{
+class TodoListViewController: SwipeTableViewController{
     
     // Outlets
     
@@ -68,22 +68,23 @@ class TodoListViewController: UITableViewController{
     }
     
     
-    func saveItems(){
-        /**
-         
-         do{
-         try context.save()
-         }catch{
-         print("Error \(error)")
-         }
-         self.tableView.reloadData()
-         */
-    }
-    
     func loadItems(){
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let itemToDelete = self.todoItems?[indexPath.row]{
+            do{
+                try self.realm.write{
+                    self.realm.delete(itemToDelete)
+                }
+            }catch{
+                print("Error while delete \(error)")
+            }
+            
+        }
     }
         
 }
@@ -97,8 +98,10 @@ extension TodoListViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = todoItems?[indexPath.row].title ?? "No items added yet"
+        
         
         if let item = todoItems?[indexPath.row]{
             cell.textLabel?.text = item.title
